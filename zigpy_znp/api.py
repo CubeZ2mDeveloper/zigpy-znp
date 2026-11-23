@@ -133,7 +133,7 @@ class ZNP:
             model_rsp = (
                 await self.request(c.SYS.Model.Req(), timeout=5)
             ).Model.decode("utf-8", errors="replace")
-        except (CommandNotRecognized, TimeoutError):
+        except CommandNotRecognized:
             model_rsp = None
         if model_rsp:
             model = model_rsp
