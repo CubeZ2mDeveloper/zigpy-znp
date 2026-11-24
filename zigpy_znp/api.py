@@ -130,9 +130,9 @@ class ZNP:
             fw_variant = "Z-Stack Home 1.2" if self.version == 1.2 else "Z-Stack 3.0.x"
 
         try:
-            model_rsp = (
-                await self.request(c.SYS.Model.Req(), timeout=5)
-            ).Model.decode("utf-8", errors="replace")
+            model_rsp = (await self.request(c.SYS.Model.Req())).Model.decode(
+                "utf-8", errors="replace"
+            )
         except CommandNotRecognized:
             model_rsp = None
         if model_rsp:

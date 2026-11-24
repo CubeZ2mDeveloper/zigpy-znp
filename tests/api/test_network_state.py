@@ -14,7 +14,33 @@ from ..conftest import (
     BaseZStack1CC2531,
     FormedLaunchpadCC26X2R1,
     FormedZStack3CC2531,
+    FormedZStack3WithModel,
 )
+
+
+@pytest.mark.parametrize(
+    "reported_model, expected_model",
+    [
+        pytest.param(None, "CC2652", id="unsupported"),
+        pytest.param(b"", "CC2652", id="empty"),
+        pytest.param(b"CC2674P10", "CC2674P10", id="cc2674p10"),
+        pytest.param(b"Caf\xc3\xa9", "Caf\u00e9", id="utf8"),
+    ],
+)
+async def test_load_network_info_model(
+    reported_model, expected_model, make_connected_znp
+):
+    if reported_model is None:
+        znp, _ = await make_connected_znp(server_cls=FormedLaunchpadCC26X2R1)
+    else:
+        znp, znp_server = await make_connected_znp(server_cls=FormedZStack3WithModel)
+        znp_server.reported_model = reported_model
+
+    await znp.load_network_info()
+
+    assert znp.node_info.model == expected_model
+
+    await znp.disconnect()
 
 
 @pytest.mark.parametrize("to_device", ALL_DEVICES)

@@ -1365,7 +1365,22 @@ class BaseZStack3CC2531(BaseZStack3Device):
         return req.Rsp(Status=t.Status.SUCCESS)
 
 
+class BaseZStack3WithModel(BaseLaunchpadCC26X2R1):
+    reported_model = b"CC2674P10"
+
+    @reply_to(c.SYS.Model.Req())
+    def model_responder(self, req):
+        return req.Rsp(Model=self.reported_model)
+
+
 class FormedLaunchpadCC26X2R1(BaseLaunchpadCC26X2R1):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._nvram = load_nvram_json("CC2652R-ZStack4.formed.json")
+        self._orig_nvram = simple_deepcopy(self._nvram)
+
+
+class FormedZStack3WithModel(BaseZStack3WithModel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._nvram = load_nvram_json("CC2652R-ZStack4.formed.json")
